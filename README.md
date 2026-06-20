@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/CSshabbar/Facility_management_Mobile_app"><img src="https://img.shields.io/badge/Project_Status-Production--Ready-success?style=for-the-badge&color=2ea44f" alt="Status" /></a>
+  <a href="https://www.linkedin.com/in/muhammad-shabbar/" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
   <a href="#system-architecture"><img src="https://img.shields.io/badge/Architecture-Distributed_Sync-blue?style=for-the-badge&color=007acc" alt="Architecture" /></a>
   <a href="#offline-first-sync-lifecycle"><img src="https://img.shields.io/badge/Engine-Offline--First-blueviolet?style=for-the-badge&color=8b5cf6" alt="Engine" /></a>
 </p>
@@ -337,3 +338,12 @@ Provide a visual preview of the project for social shares and link previews:
 Make the repository easier to find by adding relevant tags:
 * Under the repository description on the right sidebar, click the **cog icon** next to About.
 * In the **Topics** field, add: `react-native`, `offline-first`, `azure-cosmosdb`, `signalr-service`, `sqlite`, `optimistic-concurrency`, `system-architecture`.
+
+---
+
+## 📬 Contact & Connect
+Let's connect and discuss software architecture, mobile development, or cloud infrastructure!
+
+*   **LinkedIn:** [linkedin.com/in/muhammad-shabbar](https://www.linkedin.com/in/muhammad-shabbar/)
+*   **GitHub Repository:** [Facility_management_Mobile_app](https://github.com/CSshabbar/Facility_management_Mobile_app)
+
