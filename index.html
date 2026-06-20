@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FacilitySync — Case Study</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #0A0A0B;
+      color: #E4E4E7;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Hero ──────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 60%);
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 100px;
+      border: 1px solid rgba(59,130,246,0.3);
+      background: rgba(59,130,246,0.06);
+      font-size: 13px;
+      color: #60A5FA;
+      letter-spacing: 0.5px;
+      margin-bottom: 32px;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      color: #FAFAFA;
+      margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: #A1A1AA;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .tech-tag {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #D4D4D8;
+    }
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      animation: bounce 2s infinite;
+      color: #52525B;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* ── Architecture Section ─────────────────────── */
+    .arch-section {
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+    .arch-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    }
+    .arch-section h2 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #FAFAFA;
+      margin-bottom: 16px;
+    }
+    .arch-section p {
+      color: #A1A1AA;
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+    .arch-img {
+      width: 100%;
+      max-width: 900px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── Scenario Sections ────────────────────────── */
+    .scenario {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      position: relative;
+    }
+    .scenario::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    }
+    .scenario:nth-child(odd) .scenario-video { order: 2; }
+    .scenario:nth-child(odd) .scenario-text  { order: 1; }
+
+    .scenario-number {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3B82F6;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .scenario-text h3 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #FAFAFA;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    .scenario-text p {
+      color: #A1A1AA;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+    .tech-detail {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+    .tech-detail h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8B5CF6;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .tech-detail ul {
+      list-style: none;
+      padding: 0;
+    }
+    .tech-detail li {
+      font-size: 13px;
+      color: #A1A1AA;
+      padding: 4px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+    .tech-detail li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3B82F6;
+    }
+
+    /* ── Video Container ─────────────────────────── */
+    .video-wrapper {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #18181B;
+      border: 1px solid rgba(255,255,255,0.08);
+      margin: 0 auto;
+      width: 100%;
+    }
+    .video-wrapper video {
+      width: 100%;
+      display: block;
+    }
+    /* Placeholder (only shown when no video) */
+    .video-placeholder {
+      aspect-ratio: 9 / 16;
+      max-width: 300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #18181B 0%, #1E1E22 100%);
+      gap: 12px;
+    }
+    .video-placeholder svg {
+      width: 48px;
+      height: 48px;
+      color: #3F3F46;
+    }
+    .video-placeholder span {
+      color: #52525B;
+      font-size: 13px;
+    }
+    /* Hide placeholder when video is present */
+    .video-wrapper video + .video-placeholder { display: none; }
+
+    /* ── Video Labels ─────────────────────────────── */
+    .video-labels {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      z-index: 2;
+      pointer-events: none;
+      padding: 1 5.5%;
+    }
+    .video-label {
+      padding: 5px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #FAFAFA;
+    }
+    .video-label.blue  { background: rgba(59,130,246,0.35); border-color: rgba(59,130,246,0.4); }
+    .video-label.green { background: rgba(45,106,79,0.4);   border-color: rgba(45,106,79,0.5); }
+    .video-label.amber { background: rgba(180,130,40,0.4);  border-color: rgba(180,130,40,0.5); }
+
+    /* ── RBAC Wide Section ─────────────────────────── */
+    .scenario-wide {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .scenario-wide::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    }
+    .scenario-wide-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .scenario-wide-header h3 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #FAFAFA;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .scenario-wide-header p {
+      color: #A1A1AA;
+      font-size: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .rbac-screenshots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .rbac-phone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .rbac-role-label {
+      padding: 6px 20px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #FAFAFA;
+    }
+    .rbac-role-label.blue  { background: rgba(59,130,246,0.3); border: 1px solid rgba(59,130,246,0.4); }
+    .rbac-role-label.green { background: rgba(45,106,79,0.35); border: 1px solid rgba(45,106,79,0.5); }
+    .rbac-role-label.amber { background: rgba(180,130,40,0.35); border: 1px solid rgba(180,130,40,0.5); }
+    .rbac-phone img {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .rbac-caption {
+      font-size: 13px;
+      color: #A1A1AA;
+      text-align: center;
+      line-height: 1.5;
+      max-width: 300px;
+    }
+    .rbac-caption strong {
+      color: #E4E4E7;
+    }
+    .rbac-details-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .rbac-screenshots {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .rbac-details-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Written Assessment Section ───────────────── */
+    .written-section {
+      padding: 80px 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .written-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);
+    }
+    .written-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .written-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #FAFAFA;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .written-header p {
+      color: #A1A1AA;
+      font-size: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .qa-block {
+      margin-bottom: 48px;
+    }
+    .qa-question-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8B5CF6;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .qa-block h3 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #FAFAFA;
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+    .qa-block p {
+      color: #A1A1AA;
+      font-size: 15px;
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    .qa-block p strong {
+      color: #E4E4E7;
+    }
+    .qa-block code {
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.2);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 13px;
+      color: #C4B5FD;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+    .qa-divider {
+      width: 60px;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 48px 0;
+    }
+    .bonus-section {
+      margin-top: 56px;
+      padding: 24px;
+      border-radius: 14px;
+      background: rgba(139,92,246,0.04);
+      border: 1px solid rgba(139,92,246,0.12);
+    }
+    .bonus-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #C4B5FD;
+      margin-bottom: 16px;
+    }
+    .bonus-section p {
+      color: #A1A1AA;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .bonus-section p:last-child { margin-bottom: 0; }
+    .bonus-section strong { color: #E4E4E7; }
+
+    /* ── Footer ────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      padding: 60px 24px;
+      color: #52525B;
+      font-size: 13px;
+      position: relative;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    }
+    .footer a {
+      color: #3B82F6;
+      text-decoration: none;
+    }
+
+    /* ── Scroll Animations ────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive ───────────────────────────────── */
+    @media (max-width: 768px) {
+      .scenario {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 60px 20px;
+      }
+      .scenario:nth-child(odd) .scenario-video { order: 1; }
+      .scenario:nth-child(odd) .scenario-text  { order: 2; }
+      .video-placeholder { max-width: 240px; }
+      .hero { min-height: 80vh; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  HERO                                          -->
+  <!-- ══════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-badge">Client Project Case Study</div>
+    <h1>Retail<span>FixIt</span></h1>
+    <p class="hero-sub" style="margin-bottom: 20px;">
+      A mobile-first field service platform with offline-first sync, real-time updates,
+      role-based access, and conflict resolution — built with React Native, Express, and Azure.
+    </p>
+    <div style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); padding: 12px 20px; border-radius: 8px; margin-bottom: 40px; max-width: 600px; display: inline-block;">
+      <p style="color: #C4B5FD; font-size: 14px; margin: 0;"><strong>* Disclaimer:</strong> This page is a technical showcase of a real-world application architecture built for a client.</p>
+    </div>
+    <div class="tech-stack">
+      <span class="tech-tag">React Native (Expo)</span>
+      <span class="tech-tag">TypeScript</span>
+      <span class="tech-tag">Express 5</span>
+      <span class="tech-tag">Azure Cosmos DB</span>
+      <span class="tech-tag">Azure SignalR</span>
+      <span class="tech-tag">Azure Blob Storage</span>
+      <span class="tech-tag">SQLite</span>
+    </div>
+    <div class="scroll-hint">SCROLL TO EXPLORE &nbsp;&mdash;&nbsp; <a href="#written" style="color:#8B5CF6; text-decoration:none;">Jump to Written Assessment</a></div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  ARCHITECTURE                                  -->
+  <!-- ══════════════════════════════════════════════ -->
+  <section class="arch-section fade-up">
+    <h2>System Architecture</h2>
+    <p>The mobile app communicates with an Express backend, which orchestrates Azure Cosmos DB for data, Blob Storage for photos, and SignalR for real-time push notifications.</p>
+    <img class="arch-img" src="../architecture-diagram.png" alt="FacilitySync Architecture Diagram" />
+  </section>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  SCENARIOS                                     -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="scenarios">
+
+    <!-- ── 1. Real-Time Sync ─────────────────────── -->
+    <section class="scenario fade-up">
+      <div class="scenario-video">
+        <div class="video-wrapper">
+          <div class="video-labels">
+            <span class="video-label blue">Admin</span>
+            <span class="video-label green">Technician</span>
+          </div>
+          <video src="videos/01-realtime.mp4" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+      <div class="scenario-text">
+        <div class="scenario-number">Scenario 01</div>
+        <h3>Real-Time Multi-User Sync</h3>
+        <p>
+          Admin creates a job on one device — it instantly appears on the technician's device
+          without any manual refresh. When the admin assigns a job or changes its status,
+          the technician's screen updates in real-time through a persistent WebSocket connection
+          powered by Azure SignalR Service.
+        </p>
+        <p>
+          The backend doesn't manage WebSocket connections directly. Instead, it makes a single
+          REST API call to SignalR, which broadcasts to the right users based on their group
+          membership. This keeps the Express server stateless and simple.
+        </p>
+        <div class="tech-detail">
+          <h4>Under the Hood</h4>
+          <ul>
+            <li>Azure SignalR in <strong>serverless mode</strong> — Express broadcasts via REST API, never handles WebSocket connections</li>
+            <li>Group-based routing: messages go to <code>vendor-{id}</code>, <code>user-{id}</code>, or <code>admin</code> — only the right people get each update</li>
+            <li>Client receives push event → upserts job into local SQLite → React state updates → UI re-renders instantly</li>
+            <li>Auto-reconnect with exponential backoff (2s → 4s → 8s → 15s → 30s) if the connection drops</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 2. Offline-First ──────────────────────── -->
+    <section class="scenario fade-up">
+      <div class="scenario-video">
+        <div class="video-wrapper">
+          <video src="videos/02-offline.mp4" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+      <div class="scenario-text">
+        <div class="scenario-number">Scenario 02</div>
+        <h3>Offline-First Architecture</h3>
+        <p>
+          The app works fully without internet. Turn on airplane mode, create new jobs,
+          update statuses, browse your job list — everything is instant because every screen
+          reads from a local SQLite database on the device, not the network.
+        </p>
+        <p>
+          Changes made offline are queued in a <code>pending_actions</code> table and processed
+          in order when connectivity returns. The status bar dot turns red when offline and
+          shows a pending count badge. On reconnect, a full sync drains the queue (writes first),
+          then pulls the latest data from the server using a delta sync protocol — only fetching
+          jobs that changed since the last sync to save bandwidth.
+        </p>
+        <div class="tech-detail">
+          <h4>Under the Hood</h4>
+          <ul>
+            <li><strong>SQLite-first reads:</strong> every screen loads from local DB instantly — zero network dependency for displaying data</li>
+            <li><strong>Action queue:</strong> offline writes are stored as FIFO entries with retry counts and error tracking</li>
+            <li><strong>Writes before reads:</strong> sync engine sends local changes to server first, then pulls updates — preventing your changes from being overwritten</li>
+            <li><strong>Bidirectional health polling:</strong> detects going offline (backend unreachable) and coming back online (backend responds)</li>
+            <li><strong>Forced full sync on reconnect:</strong> immediately catches deleted jobs and resolves all pending actions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 3. Conflict Resolution ────────────────── -->
+    <section class="scenario fade-up">
+      <div class="scenario-video">
+        <div class="video-wrapper">
+          <div class="video-labels">
+            <span class="video-label blue">Admin</span>
+            <span class="video-label amber">Dispatcher</span>
+          </div>
+          <video src="videos/03-realtime.mp4" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+      <div class="scenario-text">
+        <div class="scenario-number">Scenario 03</div>
+        <h3>Conflict Detection & Resolution</h3>
+        <p>
+          Two users open the same job at the same time. User A edits the title and saves — it succeeds.
+          User B then tries to save their changes, but the server rejects them with a 409 Conflict
+          because the job's version tag (<code>_etag</code>) no longer matches.
+        </p>
+        <p>
+          This is <strong>optimistic concurrency control</strong> — instead of locking records (which would
+          block other users), we let everyone read freely and only check for conflicts at write time.
+          The user is never left in the dark: they see a clear error and can refresh to get the latest version
+          before retrying. No data is silently lost or overwritten.
+        </p>
+        <div class="tech-detail">
+          <h4>Under the Hood</h4>
+          <ul>
+            <li>Every Cosmos DB document has an <code>_etag</code> that changes on every write — acts as a version stamp</li>
+            <li>Every PATCH request must include <code>_etag</code> — server compares it before applying changes</li>
+            <li>Mismatched eTag → HTTP 409 response → mobile shows "Job was modified by another request"</li>
+            <li>For offline queued actions: 409 marks the job as "conflict" in SQLite with a resolution UI</li>
+            <li>No automatic merge — user decides the outcome, because auto-merging "completed" + "cancelled" would be dangerous</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 4. RBAC ───────────────────────────────── -->
+    <section class="scenario-wide fade-up">
+      <div class="scenario-wide-header">
+        <div class="scenario-number">Scenario 04</div>
+        <h3>Role-Based Access Control</h3>
+        <p>Same app, three logins, three completely different experiences. Every API endpoint, every button, and every piece of data is filtered by the user's role.</p>
+      </div>
+
+      <div class="rbac-screenshots">
+        <div class="rbac-phone">
+          <span class="rbac-role-label blue">Admin</span>
+          <img src="images/admin.png" alt="Admin view — sees all jobs across all vendors" />
+          <div class="rbac-caption">
+            <strong>Full visibility.</strong> Sees all jobs across every vendor. Has the "+ New" button to create jobs for any vendor. Can delete, edit, assign, and cancel any job in the system.
+          </div>
+        </div>
+        <div class="rbac-phone">
+          <span class="rbac-role-label amber">Dispatcher</span>
+          <img src="images/dispatcher.png" alt="Dispatcher view — sees only their vendor's jobs" />
+          <div class="rbac-caption">
+            <strong>Vendor-scoped.</strong> Only sees jobs belonging to their vendor. Has "+ New" but can only create jobs for their own vendor. Can assign technicians and cancel jobs, but cannot delete.
+          </div>
+        </div>
+        <div class="rbac-phone">
+          <span class="rbac-role-label green">Technician</span>
+          <img src="images/Technichian.png" alt="Technician view — sees only assigned jobs" />
+          <div class="rbac-caption">
+            <strong>Assigned only.</strong> No "+ New" button — technicians cannot create jobs. Only sees jobs assigned to them. Can update status (start work, complete) and upload photos, but cannot cancel or delete.
+          </div>
+        </div>
+      </div>
+
+      <div class="rbac-details-row">
+        <div class="tech-detail">
+          <h4>How It's Enforced</h4>
+          <ul>
+            <li>JWT token carries <code>role</code>, <code>vendorId</code>, <code>userId</code> claims — signed server-side</li>
+            <li>RBAC middleware on every endpoint rejects unauthorized access before any DB query runs</li>
+            <li>Cosmos DB <code>tenantId</code> partition key provides vendor isolation at the database level</li>
+            <li>Query filters applied server-side: technicians only get <code>WHERE assignedTo = @userId</code></li>
+          </ul>
+        </div>
+        <div class="tech-detail">
+          <h4>Permission Matrix</h4>
+          <ul>
+            <li><strong>Create jobs:</strong> Admin (any vendor) &bull; Dispatcher (own vendor) &bull; Technician (no)</li>
+            <li><strong>Edit jobs:</strong> Admin (any) &bull; Dispatcher (own vendor) &bull; Technician (no)</li>
+            <li><strong>Delete jobs:</strong> Admin only</li>
+            <li><strong>Assign technicians:</strong> Admin &bull; Dispatcher &bull; Technician (no)</li>
+            <li><strong>Cancel jobs:</strong> Admin &bull; Dispatcher &bull; Technician (no)</li>
+            <li><strong>Upload photos:</strong> All roles (own/accessible jobs only)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 5. Vendor-Filtered Creation ───────────── -->
+    <section class="scenario fade-up">
+      <div class="scenario-video">
+        <div class="video-wrapper">
+          <img src="images/senario_5.jpg" alt="Admin creating a job with vendor selection and technician assignment" style="width:100%; display:block; border-radius:16px;" />
+        </div>
+      </div>
+      <div class="scenario-text">
+        <div class="scenario-number">Scenario 05</div>
+        <h3>Vendor-Filtered Job Creation</h3>
+        <p>
+          When an admin creates a new job, they don't type a vendor ID — they pick a vendor
+          by name from a visual selector. The moment a vendor is chosen, the technician list
+          automatically filters to show only technicians belonging to that vendor.
+        </p>
+        <p>
+          This prevents mistakes like assigning a "Cool Air" technician to a "Spark Electric" job.
+          The admin can optionally select a technician and the job is created and assigned in a single
+          step — two API calls (<code>POST /api/jobs</code> then <code>POST /api/jobs/:id/assign</code>)
+          happen seamlessly behind the scenes.
+        </p>
+        <p>
+          Dispatchers see a simpler version: their vendor is pre-selected and locked, so they
+          can only create jobs for their own company.
+        </p>
+        <div class="tech-detail">
+          <h4>Under the Hood</h4>
+          <ul>
+            <li><code>GET /api/auth/vendors</code> returns vendor names derived from dispatcher profiles in Cosmos DB</li>
+            <li><code>GET /api/auth/technicians?vendorId=</code> dynamically filters technicians by the selected vendor</li>
+            <li>Cascading React state: changing the vendor resets the technician selection and triggers a fresh API call</li>
+            <li>Dispatcher's vendor is auto-locked from their JWT <code>vendorId</code> claim — cannot be changed client-side</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 6. Photo Attachments ──────────────────── -->
+    <section class="scenario fade-up">
+      <div class="scenario-video">
+        <div class="video-wrapper">
+          <video src="videos/06-realtime.mp4" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+      <div class="scenario-text">
+        <div class="scenario-number">Scenario 06</div>
+        <h3>Photo Attachments</h3>
+        <p>
+          Technicians document their work by taking photos directly from the app — either
+          from the camera or photo gallery. Photos upload to Azure Blob Storage and immediately
+          appear in the job's photo carousel. Other users (admin, dispatcher) can view these
+          photos from their own devices.
+        </p>
+        <p>
+          Photos are never stored in the database. Only metadata (filename, size, upload date)
+          lives in Cosmos DB. The actual image files sit in Blob Storage, and every time
+          someone views a photo, the backend generates a temporary SAS URL that expires after
+          1 hour — so there are no permanent public links to any photo.
+        </p>
+        <div class="tech-detail">
+          <h4>Under the Hood</h4>
+          <ul>
+            <li><strong>Upload flow:</strong> <code>expo-image-picker</code> → FormData (multipart) → <code>multer</code> on backend → <code>@azure/storage-blob</code></li>
+            <li><strong>Storage path:</strong> <code>{tenantId}/{jobId}/{attachmentId}.{ext}</code> — organized by vendor and job for easy management</li>
+            <li><strong>SAS URLs:</strong> generated on-the-fly with 1-hour expiry — phone downloads directly from Blob Storage, bypassing the backend</li>
+            <li><strong>Cosmos DB patch:</strong> attachment metadata appended to the job's <code>attachments[]</code> array using a single atomic operation</li>
+            <li><strong>2MB document limit:</strong> storing photos in Cosmos would quickly hit this — Blob Storage has no practical size limit</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  PART 3: WRITTEN ASSESSMENT                     -->
+  <!-- ══════════════════════════════════════════════ -->
+  <section class="written-section fade-up" id="written">
+    <div class="written-header">
+      <div class="scenario-number">Part 3</div>
+      <h2>Engineering Reasoning &amp; Operational Policies</h2>
+      <p>Written responses to the assessment questions, grounded in the actual FacilitySync implementation above.</p>
+    </div>
+
+    <!-- Q1 -->
+    <div class="qa-block">
+      <div class="qa-question-label">Question 01</div>
+      <h3>Autonomy &amp; Risk</h3>
+      <p>
+        <strong>Which actions should never be fully automatic on mobile, and why?</strong>
+      </p>
+      <p>
+        In FacilitySync, several actions require explicit human confirmation because their consequences are difficult or impossible to reverse, or because they affect real-world commitments and money:
+      </p>
+      <p>
+        <strong>Forced vendor reassignment</strong> should never be automatic. Reassigning a job from one vendor to another means cancelling a contractual commitment with the first vendor and creating one with the second. If this happened silently — say, triggered by a load-balancing algorithm — it could send a technician to a site where they have no context, or leave the original vendor's dispatcher unaware. In FacilitySync, only admins and dispatchers can assign jobs, and the action requires a deliberate tap on a specific technician from a filtered list. There is no automatic dispatch algorithm.
+      </p>
+      <p>
+        <strong>Job deletion</strong> is restricted to admins and always requires confirmation through an alert dialog. A deleted job cannot be recovered (it is removed from Cosmos DB and SQLite). If a technician or dispatcher could delete jobs, it would destroy audit trails. In the current implementation, even admins only see the delete option on completed or cancelled jobs — active jobs cannot be deleted.
+      </p>
+      <p>
+        <strong>Job cancellation</strong> requires explicit user action because it reverses a commitment. A technician might already be en route. The app requires a tap on "Cancel" followed by an alert confirmation. Technicians cannot cancel at all — only admins and dispatchers can.
+      </p>
+      <p>
+        <strong>Bulk data operations</strong> (data purges, mass status changes) are not exposed in the mobile app at all. These would need a separate admin web console with audit logging. The mobile interface is intentionally limited to single-job operations to prevent accidental mass actions on a small touch screen.
+      </p>
+      <p>
+        The general principle: any action that affects another person's workflow, cannot be undone, or has financial/contractual implications must require a deliberate tap with a confirmation step. Automation is appropriate for <em>reading</em> and <em>syncing</em> — never for destructive <em>writes</em>.
+      </p>
+    </div>
+
+    <div class="qa-divider"></div>
+
+    <!-- Q2 -->
+    <div class="qa-block">
+      <div class="qa-question-label">Question 02</div>
+      <h3>Sync Safety &amp; Conflict Handling</h3>
+      <p>
+        <strong>How do you detect sync/conflict problems from offline clients? What is your conflict resolution strategy?</strong>
+      </p>
+      <p>
+        FacilitySync uses <strong>optimistic concurrency control</strong> via Cosmos DB's <code>_etag</code> field. Every document in Cosmos DB has an <code>_etag</code> that changes on every write. When the mobile app sends an update (PATCH request), it must include the <code>_etag</code> it last read. The backend passes this to Cosmos DB as an <code>if-match</code> condition. If the document was modified by someone else in the meantime, Cosmos DB rejects the write with a 412 Precondition Failed, which the backend translates to an HTTP 409 Conflict.
+      </p>
+      <p>
+        <strong>For online users,</strong> conflict detection is immediate. Both users have the job open, both have the same <code>_etag</code>. The first save succeeds and generates a new <code>_etag</code>. The second save fails with 409, and the app displays "This job was modified by another user. Please refresh and try again." The user can pull-to-refresh to get the latest version (with the winner's changes) and re-apply their edits.
+      </p>
+      <p>
+        <strong>For offline users,</strong> the conflict path is more nuanced. When a user changes a job's status while offline, the action is queued in SQLite's <code>pending_actions</code> table with the <code>_etag</code> that was current at the time of the offline action. When connectivity returns, the sync engine drains the queue in FIFO order. If any action hits a 409, the sync engine marks that job's <code>syncStatus</code> as <code>'conflict'</code> in SQLite and removes the action from the queue. The UI can then surface these conflict markers to the user.
+      </p>
+      <p>
+        <strong>Why not last-writer-wins?</strong> Because in a field service app, statuses have real-world meaning. If one user marks a job as "completed" and another marks it as "cancelled," automatically picking the last write could result in a technician being paid for work that was cancelled, or a completed job being silently undone. The safer approach is to reject the second write and let a human decide.
+      </p>
+      <p>
+        <strong>Why not automatic merge?</strong> For the same reason. Merging two conflicting edits to a job's title or description might produce a coherent result, but merging two conflicting <em>statuses</em> is logically impossible. Rather than having two strategies (merge for some fields, reject for others), the app uses a single consistent policy: reject and notify.
+      </p>
+      <p>
+        The sync engine also performs a <strong>full resync every 5th cycle</strong> (and immediately on reconnect) by clearing locally cached <code>'synced'</code> jobs and re-fetching from the server. This catches server-side deletions that delta sync would miss, since there is no way to express "this document was deleted since timestamp X" in a pull-based delta protocol without a separate tombstone mechanism.
+      </p>
+    </div>
+
+    <div class="qa-divider"></div>
+
+    <!-- Q3 -->
+    <div class="qa-block">
+      <div class="qa-question-label">Question 03</div>
+      <h3>Instrumentation &amp; Events</h3>
+      <p>
+        <strong>What event instrumentation is required to keep mobile workflows reliable? Which metrics and traces are critical?</strong>
+      </p>
+      <p>
+        The system emits several categories of events that are essential for operational visibility:
+      </p>
+      <p>
+        <strong>Job lifecycle events</strong> — <code>JobCreated</code>, <code>JobAssigned</code>, <code>JobStatusChanged</code>, <code>JobDeleted</code>. These are broadcast via SignalR to keep all connected clients in sync. On the backend, each event is logged with the acting user's ID, role, the previous and new state, and a timestamp. This creates an audit trail: you can reconstruct exactly who changed a job's status and when.
+      </p>
+      <p>
+        <strong>Sync events</strong> — <code>ClientSyncStarted</code>, <code>ClientSyncCompleted</code>, <code>SyncConflictDetected</code>. The sync engine tracks how many actions were processed, how many failed, how many jobs were synced, and which job IDs hit 409 conflicts. These metrics, if sent to a monitoring backend (e.g., Azure Application Insights), would reveal patterns like "User X has had 5 conflicts in the last hour" which may indicate a workflow problem rather than a technical one.
+      </p>
+      <p>
+        <strong>Connectivity events</strong> — <code>ClientWentOffline</code>, <code>ClientReconnected</code>, <code>SignalRConnected</code>, <code>SignalRDisconnected</code>. These are tracked locally via the OfflineContext's state machine and could be reported to analytics. They're critical for understanding field conditions: if 40% of technicians are offline at any given time, the system needs to be optimized for offline-first more aggressively.
+      </p>
+      <p>
+        <strong>Critical metrics for troubleshooting latency:</strong>
+      </p>
+      <p>
+        <strong>API response time per endpoint</strong> — especially <code>POST /api/jobs/sync</code> (the delta sync endpoint) because it's called every 4–10 seconds by every active client. If this endpoint's P95 exceeds 500ms, the polling interval should be widened or the query optimized. <strong>SignalR message delivery time</strong> — the gap between the backend's REST call to SignalR and the client receiving the push. This is largely controlled by Azure but can degrade under load. <strong>Sync cycle duration</strong> — how long it takes to drain the action queue + pull delta updates. If this exceeds 3 seconds consistently, offline users coming back online will experience a noticeable delay. <strong>Conflict rate</strong> — a sudden spike in 409s may indicate a UX problem (e.g., two dispatchers managing the same vendor's jobs) rather than a technical failure.
+      </p>
+      <p>
+        On the backend, the Express app uses <code>pino-http</code> for structured JSON logging on every request, including method, path, status code, response time, and the authenticated user's ID and role. This makes it possible to trace a specific user's actions through the system using their <code>userId</code> as a correlation key.
+      </p>
+    </div>
+
+    <div class="qa-divider"></div>
+
+    <!-- Q4 -->
+    <div class="qa-block">
+      <div class="qa-question-label">Question 04</div>
+      <h3>Failure Modes &amp; Graceful Degradation</h3>
+      <p>
+        <strong>How should the mobile app behave when backend services are unavailable or slow?</strong>
+      </p>
+      <p>
+        FacilitySync is designed to be <strong>fully functional without a backend</strong>. The core principle is: every screen reads from local SQLite, never directly from the network. This means if the backend goes down entirely, the user can still browse their job list, view job details, and see all previously synced data. The app does not show a blank screen or a loading spinner that never resolves.
+      </p>
+      <p>
+        <strong>Offline detection</strong> uses three complementary signals. First, the <code>@react-native-community/netinfo</code> listener detects OS-level connectivity changes instantly (WiFi off, airplane mode). Second, a bidirectional health poll hits <code>GET /api/health</code> every 3 seconds — this catches scenarios where the device has WiFi but the backend is unreachable (server down, DNS failure, firewall). The poll requires 2 consecutive failures before transitioning to offline, preventing false positives from a single dropped packet. Third, when the app returns to the foreground after being backgrounded, it immediately re-checks connectivity via NetInfo.
+      </p>
+      <p>
+        <strong>Write operations while offline</strong> are queued rather than rejected. When a user creates a job or changes a status offline, the action is written to the <code>pending_actions</code> table in SQLite with the full payload and a retry counter. The UI shows a pending count badge so the user knows they have unsynced changes. When connectivity returns, the sync engine drains the queue in FIFO order (writes before reads), ensuring that the user's changes are sent to the server before pulling new data.
+      </p>
+      <p>
+        <strong>If an individual action fails</strong> (not due to connectivity), the sync engine increments a retry counter and records the error message. After 3 failed attempts, the action is removed from the queue and the job is marked with a <code>'conflict'</code> sync status so the user can investigate. This prevents a single poisoned action from blocking the entire queue.
+      </p>
+      <p>
+        <strong>Network timeouts</strong> are handled differently from application errors. If an action fails because the request timed out, the sync engine stops processing the queue immediately (rather than continuing to the next action) because a timeout suggests the network is too slow or the backend is overloaded. It will retry on the next sync cycle.
+      </p>
+      <p>
+        <strong>SignalR reconnection</strong> uses exponential backoff: 2s → 4s → 8s → 15s → 30s. If the WebSocket connection drops, the app falls back to polling (every 4 seconds instead of the 10-second interval used when SignalR is active). This ensures real-time-ish updates continue even without the push channel. When SignalR reconnects, the polling interval automatically widens back to 10 seconds to reduce unnecessary network traffic.
+      </p>
+      <p>
+        <strong>Visual feedback</strong> is immediate and honest. The status bar shows a colored dot: green (online + SignalR connected), amber (online but SignalR disconnected, polling mode), red (offline). Pending action count is shown as a badge. Edit screens disable the save button when offline with a clear message: "Editing requires an internet connection." The user is never left guessing about the state of their connection or their data.
+      </p>
+    </div>
+
+    <!-- Bonus -->
+    <div class="bonus-section">
+      <h3>Bonus: Operational Considerations</h3>
+      <p>
+        <strong>Offline sync resilience:</strong> The full-sync-every-5th-cycle mechanism acts as a self-healing protocol. Even if a SignalR message is lost or a delta sync response is corrupted, the system will correct itself within 5 sync cycles (~20–50 seconds depending on the polling interval). On reconnect after offline, a forced full sync runs immediately to catch all changes including server-side deletions.
+      </p>
+      <p>
+        <strong>Cost optimization for high-read workloads:</strong> The delta sync protocol (<code>POST /api/jobs/sync</code> with a <code>since</code> timestamp) ensures that most sync calls return an empty array — only changed jobs since the last sync are transferred. This drastically reduces Cosmos DB RU consumption compared to fetching all jobs on every poll. Cosmos DB's <code>_ts</code> field is indexed by default, making the range query efficient. SAS URLs for photo attachments let the mobile client download images directly from Blob Storage, bypassing the Express backend entirely — this offloads bandwidth from the app server.
+      </p>
+      <p>
+        <strong>Scaling strategy:</strong> The Express backend is stateless — it holds no WebSocket connections (SignalR is in serverless mode) and no session state. This means it can be horizontally scaled behind Azure App Service's autoscaler or deployed as multiple container instances. Cosmos DB scales independently via RU provisioning. SignalR Service scales via its own unit-based tier. The three services scale independently based on their specific bottleneck (compute, storage IOPS, or concurrent connections).
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  FOOTER                                        -->
+  <!-- ══════════════════════════════════════════════ -->
+  <footer class="footer">
+    <p>
+      Built by Muhammad Shabbar &nbsp;|&nbsp;
+      <a href="https://github.com/CSshabbar/Facility_management_Mobile_app" target="_blank">GitHub Repository</a>
+    </p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  Scroll Animation Script                       -->
+  <!-- ══════════════════════════════════════════════ -->
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+  </script>
+
+</body>
+</html>
